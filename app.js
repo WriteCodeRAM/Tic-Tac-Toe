@@ -1,35 +1,96 @@
 const gameBoard = (() => {
   'use strict';
-  const _privateVar = 'test';
-  const board = [];
 
-  const checkWinner = () => {};
-
-  return { board };
-})();
-
-const playerFactory = (marker) => {
+  const buttonX = document.getElementById('x');
+  const buttonO = document.getElementById('o');
+  const buttons = document.querySelectorAll('button');
+  const controllerP = document.querySelector('.controller');
   const boardSquare = document.querySelectorAll('.box');
-  console.log(boardSquare);
+  let playerOneMarker;
+  let playerTwoMarker;
 
-  //function that allows player to click square with and fill with their marker
-  const placeMark = () => {
-    for (let i = 0; i < boardSquare.length; i++) {
-      if (boardSquare[i].innerText === '') {
-        boardSquare[i].addEventListener('click', () => {
-          boardSquare[i].innerText = marker;
-          gameBoard.board.push(marker);
-        });
-      }
+  const chooseMarker = document.createElement('p');
+  chooseMarker.innerText = 'Player 1, would you like to be X or O?';
+  controllerP.appendChild(chooseMarker);
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      playerOneMarker = button.innerText;
+      playerOneMarker === 'X'
+        ? (playerTwoMarker = 'O')
+        : (playerTwoMarker = 'X');
+
+      console.log(playerOneMarker);
+      //   playerTwo.placeMarker(playerTwoMarker);
+
+      playerOne(playerOneMarker);
+      playerTwo(playerTwoMarker);
+
+      buttonO.disabled = true;
+      buttonX.disabled = true;
+      chooseMarker.innerText = '';
+    });
+  });
+
+  let board = [];
+
+  //render contents of gameboard array to game-board
+  let j = 0;
+  const displayBoard = function () {
+    for (let i = 0; i < board.length; i++) {
+      console.log(j);
+      boardSquare[j].innerText = board[i];
+      j++;
     }
   };
-  return { placeMark };
-};
 
-playerFactory('x').placeMark();
+  displayBoard();
+  return { boardSquare, board, playerOneMarker, playerTwoMarker };
+})();
+//end IIFE
 
-const computerPlayer = (marker) => {
-  const { placeMark } = playerFactory(marker);
-};
+//Factory Function
+function playerOne(marker) {
+  const placeMarker = () => {
+    gameBoard.boardSquare.forEach((square) => {
+      square.addEventListener('click', () => {
+        console.log(gameBoard.playerTwoMarker);
+        if (gameBoard.board.length === 0 || gameBoard.board.length % 2 === 0) {
+          if (square.innerText === '') {
+            square.innerText = marker;
+            if (marker !== '') {
+              gameBoard.board.push(marker);
+            }
+          }
+        }
+      });
+    });
+  };
+  placeMarker();
+  return { placeMarker };
+}
 
-const displayBoard = document.querySelector('.game-container');
+function playerTwo(marker) {
+  const placeMarker = () => {
+    gameBoard.boardSquare.forEach((square) => {
+      square.addEventListener('click', () => {
+        console.log(gameBoard.playerTwoMarker);
+        if (gameBoard.board.length === 0 || gameBoard.board.length % 2 !== 0) {
+          if (square.innerText === '') {
+            square.innerText = marker;
+            if (marker !== '') {
+              gameBoard.board.push(marker);
+            }
+          }
+        }
+      });
+    });
+  };
+  placeMarker();
+}
+
+//kept getting undefined when using the factor function so I just created another playerObj
+// Player 2 Logic (inheritance fact func route)
+// const playerTwo = playerOne('');
+// console.log(playerTwo);
+// playerTwo.placeMarker = (marker) => { };
