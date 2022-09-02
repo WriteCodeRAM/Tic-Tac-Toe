@@ -1,6 +1,7 @@
 const gameBoard = (() => {
   'use strict';
   const boardBox = document.querySelectorAll('.box');
+  const boardContainer = document.querySelector('.game-board');
   let board = [];
 
   //factory function for players
@@ -31,6 +32,12 @@ const gameBoard = (() => {
           if (board.length > 4) {
             isXwinner();
           }
+          //just realized player 1 goes first and last, player 2 has it rough in tictactoe
+          if (board.length == 9 && winner === null) {
+            whosTurn.innerText = "It's a DRAW!";
+            whosTurn.style.color = 'yellow';
+            pvpButton.style.display = 'none';
+          }
           //player 2 turn
         } else if (
           box.innerText === '' &&
@@ -40,8 +47,10 @@ const gameBoard = (() => {
           whosTurn.innerText = 'Player 1 (X), make your move';
           box.innerText = player2.marker;
           board.push(player2.marker);
+
           player2.turn = false;
           player1.turn = true;
+
           console.log(board);
           if (board.length > 4) {
             isOwinner();
@@ -51,19 +60,23 @@ const gameBoard = (() => {
     });
   };
 
-  //allow user to face human or AI
+  //allow user to choose human or AI opponent
+  const resetButton = document.querySelector('.reset');
+  const pvpButton = document.querySelector('.pvp');
+  const aiButton = document.querySelector('.ai');
   const chooseMode = (function () {
-    const pvpButton = document.querySelector('.pvp');
-    const aiButton = document.querySelector('.ai');
     const buttons = document.querySelectorAll('button');
-
-    aiButton.disabled = false;
+    // whosTurn.innerText = 'Choose your mode';
+    aiButton.disabled = true;
     pvpButton.disabled = false;
+    resetButton.disabled = true;
 
     buttons.forEach((button) => {
       button.addEventListener('click', () => {
         if ((button.innerText = 'PVP')) {
+          boardContainer.classList.remove('deactivate');
           playerMark();
+          console.log('helloooooo');
           whosTurn.innerText = 'Player 1 (X), make your move';
           pvpButton.disabled = true;
           aiButton.disabled = true;
@@ -79,12 +92,6 @@ const gameBoard = (() => {
     });
   })();
 
-  //step 3??? why is this needed
-  // let i = 0;
-  // boardBox.forEach((box) => {
-  //   box.innerText = board[i];
-  //   i++;
-  // });
   const winningConditions = [
     [boardBox[0], boardBox[1], boardBox[2]],
     [boardBox[3], boardBox[4], boardBox[5]],
@@ -109,6 +116,7 @@ const gameBoard = (() => {
 
   // console.log(winningConditions[0].every(isX));
 
+  //checks if any of the winning conditons have all Xs
   const isXwinner = function () {
     winningConditions.forEach((condition) => {
       if (condition.every(isX)) {
@@ -116,19 +124,64 @@ const gameBoard = (() => {
         condition.forEach((letter) => {
           letter.style.color = '#7fff00';
         });
+
         winner = true;
         whosTurn.innerText = 'Player 1 (X) has WON!';
       }
     });
+    resetButton.disabled = false;
   };
 
+  //checks if any of the winning conditons have all Os
   const isOwinner = function () {
     winningConditions.forEach((condition) => {
       if (condition.every(isO)) {
         console.log('O has won');
         winner = true;
         whosTurn.innerText = 'Player 2 (O) has WON!';
+        condition.forEach((letter) => {
+          letter.style.color = '#7fff00';
+        });
       }
     });
+    resetButton.disabled = false;
   };
+
+  function isResetting() {
+    winningConditions.forEach((condition) => {
+      condition.forEach((letter) => {
+        letter.style.color = '#fff';
+      });
+    });
+    resetButton.innerText = 'RESET';
+    whosTurn.style.color = '#fff';
+    boardContainer.classList.add('deactivate');
+  }
+
+  function boardReset() {
+    //clear board array
+    board.length = 0;
+    let i = 0;
+    boardBox.forEach((box) => {
+      box.innerText = '';
+      i++;
+    });
+
+    console.log(board);
+    player1.turn = true;
+    player2.turn = false;
+    winner = null;
+
+    resetButton.disabled = true;
+    pvpButton.disabled = false;
+    aiButton.disabled = true;
+
+    pvpButton.style.display = 'inline-block';
+    aiButton.style.display = 'inline-block';
+    whosTurn.innerText = 'Choose your mode';
+
+    isResetting();
+  }
+
+  resetButton.addEventListener('click', boardReset);
 })();
