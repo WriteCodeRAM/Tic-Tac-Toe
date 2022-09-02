@@ -1,8 +1,7 @@
 const gameBoard = (() => {
   'use strict';
   const boardBox = document.querySelectorAll('.box');
-  let board = ['', '', '', '', '', '', '', '', ''];
-  console.log(boardBox);
+  let board = [];
 
   //factory function for players
   function playerFactory(marker, turn) {
@@ -14,50 +13,122 @@ const gameBoard = (() => {
 
   const player1 = playerFactory('X', true);
   const player2 = playerFactory('O', false);
+  const whosTurn = document.querySelector('.turn-indicator');
+  let winner = null;
 
-  const playerMark = (function () {
+  //allow players to place mark given it's their turn
+  const playerMark = function () {
     boardBox.forEach((box) => {
       box.addEventListener('click', () => {
-        //player 1 logic
-        if (box.innerText === '' && player1.turn === true) {
+        //player 1 turn
+        if (box.innerText === '' && player1.turn === true && winner === null) {
+          whosTurn.innerText = 'Player 2 (O), make your move';
           box.innerText = player1.marker;
           board.push(player1.marker);
           player1.turn = false;
           player2.turn = true;
-        } else if (box.innerText === '' && player2.turn === true) {
+          console.log(board);
+          if (board.length > 4) {
+            isXwinner();
+          }
+          //player 2 turn
+        } else if (
+          box.innerText === '' &&
+          player2.turn === true &&
+          winner === null
+        ) {
+          whosTurn.innerText = 'Player 1 (X), make your move';
           box.innerText = player2.marker;
           board.push(player2.marker);
           player2.turn = false;
           player1.turn = true;
+          console.log(board);
+          if (board.length > 4) {
+            isOwinner();
+          }
         }
+      });
+    });
+  };
+
+  //allow user to face human or AI
+  const chooseMode = (function () {
+    const pvpButton = document.querySelector('.pvp');
+    const aiButton = document.querySelector('.ai');
+    const buttons = document.querySelectorAll('button');
+
+    aiButton.disabled = false;
+    pvpButton.disabled = false;
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if ((button.innerText = 'PVP')) {
+          playerMark();
+          whosTurn.innerText = 'Player 1 (X), make your move';
+          pvpButton.disabled = true;
+          aiButton.disabled = true;
+        } else {
+          //soon
+          AILogic();
+          aiButton.disabled = true;
+          pvpButton.disabled = true;
+        }
+        pvpButton.style.display = 'none';
+        aiButton.style.display = 'none';
       });
     });
   })();
 
-  const getBoardLength = function () {
-    return board.length;
+  //step 3??? why is this needed
+  // let i = 0;
+  // boardBox.forEach((box) => {
+  //   box.innerText = board[i];
+  //   i++;
+  // });
+  const winningConditions = [
+    [boardBox[0], boardBox[1], boardBox[2]],
+    [boardBox[3], boardBox[4], boardBox[5]],
+    [boardBox[6], boardBox[7], boardBox[8]],
+    [boardBox[0], boardBox[3], boardBox[6]],
+    [boardBox[1], boardBox[4], boardBox[7]],
+    [boardBox[2], boardBox[5], boardBox[8]],
+    [boardBox[0], boardBox[4], boardBox[8]],
+    [boardBox[2], boardBox[4], boardBox[6]],
+  ];
+
+  //could've use factory func here too
+  function isX(item) {
+    let answer = item.innerText === 'X';
+    return answer;
+  }
+
+  function isO(item) {
+    let answer = item.innerText === 'O';
+    return answer;
+  }
+
+  // console.log(winningConditions[0].every(isX));
+
+  const isXwinner = function () {
+    winningConditions.forEach((condition) => {
+      if (condition.every(isX)) {
+        console.log('X has won', condition);
+        condition.forEach((letter) => {
+          letter.style.color = '#7fff00';
+        });
+        winner = true;
+        whosTurn.innerText = 'Player 1 (X) has WON!';
+      }
+    });
   };
 
-  let i = 0;
-  boardBox.forEach((box) => {
-    box.innerText = board[i];
-    i++;
-  });
-  return { boardBox, getBoardLength };
-})();
-
-//allow user to face human or AI
-const chooseMode = (function () {
-  const pvpButton = document.querySelector('.pvp');
-  const aiButton = document.querySelector('.ai');
-  const buttons = document.querySelectorAll('button');
-
-  buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-      pvpButton.disabled = true;
-      aiButton.disabled = true;
+  const isOwinner = function () {
+    winningConditions.forEach((condition) => {
+      if (condition.every(isO)) {
+        console.log('O has won');
+        winner = true;
+        whosTurn.innerText = 'Player 2 (O) has WON!';
+      }
     });
-  });
-
-  // pvpButton.addEventListener('click', Player);
+  };
 })();

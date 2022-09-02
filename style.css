@@ -57,6 +57,10 @@ button:disabled:hover{
     
 }
 
+.turn-indicator{
+    color:#b0c6dd
+}
+
 .game-container{
     /* height: 400px; */
     background-color: aliceblue;
