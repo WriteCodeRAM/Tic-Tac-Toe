@@ -13,6 +13,7 @@ body{
     flex-direction: column;
     /* height: 600px; */
     gap: 24px;
+    background-color: #131a22;
     
 }
 
@@ -26,6 +27,10 @@ header{
 
 h1{
     font-size: 3rem;
+    color: #fff;
+}
+span{
+    color: #b0c6dd;
 }
 
 button{
@@ -41,7 +46,8 @@ button:hover{
     border-radius: 10%;
     transition: 0.4s;
     background-color: #34495e;
-    color: #fff;
+    /* color: rgb(0, 190, 79); */
+    color: #b0c6dd;
 
 }
 
@@ -60,7 +66,7 @@ button:disabled:hover{
 	width: 600px;
 	height: 600px;
 	margin: 0 auto;
-  background-color: #34495e;
+  background-color: #b0c6dd;
   color: #fff;
   border: 6px solid #2c3e50;
   border-radius: 10px;
@@ -82,4 +88,6 @@ button:disabled:hover{
 
 .active{
     cursor: pointer;
+
+
 }

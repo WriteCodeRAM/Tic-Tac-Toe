@@ -1,96 +1,63 @@
 const gameBoard = (() => {
   'use strict';
+  const boardBox = document.querySelectorAll('.box');
+  let board = ['', '', '', '', '', '', '', '', ''];
+  console.log(boardBox);
 
-  const buttonX = document.getElementById('x');
-  const buttonO = document.getElementById('o');
+  //factory function for players
+  function playerFactory(marker, turn) {
+    return {
+      marker,
+      turn,
+    };
+  }
+
+  const player1 = playerFactory('X', true);
+  const player2 = playerFactory('O', false);
+
+  const playerMark = (function () {
+    boardBox.forEach((box) => {
+      box.addEventListener('click', () => {
+        //player 1 logic
+        if (box.innerText === '' && player1.turn === true) {
+          box.innerText = player1.marker;
+          board.push(player1.marker);
+          player1.turn = false;
+          player2.turn = true;
+        } else if (box.innerText === '' && player2.turn === true) {
+          box.innerText = player2.marker;
+          board.push(player2.marker);
+          player2.turn = false;
+          player1.turn = true;
+        }
+      });
+    });
+  })();
+
+  const getBoardLength = function () {
+    return board.length;
+  };
+
+  let i = 0;
+  boardBox.forEach((box) => {
+    box.innerText = board[i];
+    i++;
+  });
+  return { boardBox, getBoardLength };
+})();
+
+//allow user to face human or AI
+const chooseMode = (function () {
+  const pvpButton = document.querySelector('.pvp');
+  const aiButton = document.querySelector('.ai');
   const buttons = document.querySelectorAll('button');
-  const controllerP = document.querySelector('.controller');
-  const boardSquare = document.querySelectorAll('.box');
-  let playerOneMarker;
-  let playerTwoMarker;
-
-  const chooseMarker = document.createElement('p');
-  chooseMarker.innerText = 'Player 1, would you like to be X or O?';
-  controllerP.appendChild(chooseMarker);
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
-      playerOneMarker = button.innerText;
-      playerOneMarker === 'X'
-        ? (playerTwoMarker = 'O')
-        : (playerTwoMarker = 'X');
-
-      console.log(playerOneMarker);
-      //   playerTwo.placeMarker(playerTwoMarker);
-
-      playerOne(playerOneMarker);
-      playerTwo(playerTwoMarker);
-
-      buttonO.disabled = true;
-      buttonX.disabled = true;
-      chooseMarker.innerText = '';
+      pvpButton.disabled = true;
+      aiButton.disabled = true;
     });
   });
 
-  let board = [];
-
-  //render contents of gameboard array to game-board
-  let j = 0;
-  const displayBoard = function () {
-    for (let i = 0; i < board.length; i++) {
-      console.log(j);
-      boardSquare[j].innerText = board[i];
-      j++;
-    }
-  };
-
-  displayBoard();
-  return { boardSquare, board, playerOneMarker, playerTwoMarker };
+  // pvpButton.addEventListener('click', Player);
 })();
-//end IIFE
-
-//Factory Function
-function playerOne(marker) {
-  const placeMarker = () => {
-    gameBoard.boardSquare.forEach((square) => {
-      square.addEventListener('click', () => {
-        console.log(gameBoard.playerTwoMarker);
-        if (gameBoard.board.length === 0 || gameBoard.board.length % 2 === 0) {
-          if (square.innerText === '') {
-            square.innerText = marker;
-            if (marker !== '') {
-              gameBoard.board.push(marker);
-            }
-          }
-        }
-      });
-    });
-  };
-  placeMarker();
-  return { placeMarker };
-}
-
-function playerTwo(marker) {
-  const placeMarker = () => {
-    gameBoard.boardSquare.forEach((square) => {
-      square.addEventListener('click', () => {
-        console.log(gameBoard.playerTwoMarker);
-        if (gameBoard.board.length === 0 || gameBoard.board.length % 2 !== 0) {
-          if (square.innerText === '') {
-            square.innerText = marker;
-            if (marker !== '') {
-              gameBoard.board.push(marker);
-            }
-          }
-        }
-      });
-    });
-  };
-  placeMarker();
-}
-
-//kept getting undefined when using the factor function so I just created another playerObj
-// Player 2 Logic (inheritance fact func route)
-// const playerTwo = playerOne('');
-// console.log(playerTwo);
-// playerTwo.placeMarker = (marker) => { };
