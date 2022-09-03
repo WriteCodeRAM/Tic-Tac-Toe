@@ -14,6 +14,7 @@ const gameBoard = (() => {
 
   const player1 = playerFactory('X', true);
   const player2 = playerFactory('O', false);
+  const AI = playerFactory('O', false);
   const whosTurn = document.querySelector('.turn-indicator');
   let winner = null;
 
@@ -28,7 +29,6 @@ const gameBoard = (() => {
           board.push(player1.marker);
           player1.turn = false;
           player2.turn = true;
-          console.log(board);
           if (board.length > 4) {
             isXwinner();
           }
@@ -50,8 +50,6 @@ const gameBoard = (() => {
 
           player2.turn = false;
           player1.turn = true;
-
-          console.log(board);
           if (board.length > 4) {
             isOwinner();
           }
@@ -64,25 +62,27 @@ const gameBoard = (() => {
   const resetButton = document.querySelector('.reset');
   const pvpButton = document.querySelector('.pvp');
   const aiButton = document.querySelector('.ai');
+
   const chooseMode = (function () {
     const buttons = document.querySelectorAll('button');
     // whosTurn.innerText = 'Choose your mode';
-    aiButton.disabled = true;
+    aiButton.disabled = false;
     pvpButton.disabled = false;
     resetButton.disabled = true;
 
     buttons.forEach((button) => {
       button.addEventListener('click', () => {
-        if ((button.innerText = 'PVP')) {
-          boardContainer.classList.remove('deactivate');
-          playerMark();
-          console.log('helloooooo');
-          whosTurn.innerText = 'Player 1 (X), make your move';
-          pvpButton.disabled = true;
-          aiButton.disabled = true;
-        } else {
-          //soon
-          AILogic();
+        // if ((button.innerText = 'PVP')) {
+        //   console.log('why');
+        //   boardContainer.classList.remove('deactivate');
+        //   playerMark();
+        //   whosTurn.innerText = 'Player 1 (X), make your move';
+        //   pvpButton.disabled = true;
+        //   aiButton.disabled = true;
+        // } else
+        if (button.innerText === 'AI') {
+          AImode();
+          console.log('hello?');
           aiButton.disabled = true;
           pvpButton.disabled = true;
         }
@@ -113,8 +113,6 @@ const gameBoard = (() => {
     let answer = item.innerText === 'O';
     return answer;
   }
-
-  // console.log(winningConditions[0].every(isX));
 
   //checks if any of the winning conditons have all Xs
   const isXwinner = function () {
@@ -147,6 +145,7 @@ const gameBoard = (() => {
     resetButton.disabled = false;
   };
 
+  //resetting letter styling back to normal from green(win)/yellow(draw)
   function isResetting() {
     winningConditions.forEach((condition) => {
       condition.forEach((letter) => {
@@ -184,4 +183,60 @@ const gameBoard = (() => {
   }
 
   resetButton.addEventListener('click', boardReset);
+
+  function AImode() {
+    boardBox.forEach((box) => {
+      box.addEventListener('click', () => {
+        //player 1 turn
+        if (box.innerText === '' && player1.turn === true && winner === null) {
+          box.innerText = player1.marker;
+          board.push(player1.marker);
+          player1.turn = false;
+          AI.turn = true;
+
+          aiFindBox();
+
+          board.push(AI.marker);
+          AI.turn = false;
+          player1.turn = true;
+          if (board.length > 4) {
+            isXwinner();
+          }
+          if (board.length == 9 && winner === null) {
+            whosTurn.innerText = "It's a DRAW!";
+            whosTurn.style.color = 'yellow';
+            pvpButton.style.display = 'none';
+          }
+          //AI turn
+          // } else if (
+          //   box.innerText === '' &&
+          //   AI.turn === true &&
+          //   winner === null
+          // ) {
+          //   aiFindBox();
+          //   board.push(AI.marker);
+          //   AI.turn = false;
+          //   player1.turn = true;
+        }
+      });
+    });
+  }
+
+  function aiFindBox() {
+    let box = Math.floor(Math.random() * 9);
+    let newBox = [];
+    if (boardBox[box].innerText === '') {
+      return (boardBox[box].innerText = AI.marker);
+    } else {
+      for (let i = 0; i < boardBox.length; i++) {
+        if (boardBox[i].innerText === '') {
+          newBox.push(boardBox[i]);
+        }
+      }
+    }
+    console.log(newBox);
+    if (board.length <= 8) {
+      return (newBox[0].innerText = AI.marker);
+    }
+  }
 })();
