@@ -7,5 +7,7 @@ Learning Outcomes
 - Scopes & Closures
 - Factory Functions
 
+Features coming soon: 
+1. Unbeatable AI mode
 
 ### [Project Link](https://writecoderam.github.io/Tic-Tac-Toe/)
