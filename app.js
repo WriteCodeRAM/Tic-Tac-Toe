@@ -49,6 +49,7 @@ const gameBoard = (() => {
             whoseTurn.innerText = "It's a DRAW!";
             whoseTurn.style.color = 'yellow';
             pvpButton.style.display = 'none';
+            initialize();
           }
           //player 2 turn
         } else if (
@@ -83,7 +84,6 @@ const gameBoard = (() => {
   pvpButton.addEventListener('click', runPVP);
   aiButton.addEventListener('click', runAI);
 
-  const buttons = document.querySelectorAll('button');
   resetButton.disabled = true;
 
   // ----------------------------RUN PVP LOGIC--------------------------------------- //
@@ -246,6 +246,7 @@ const gameBoard = (() => {
             whoseTurn.innerText = "It's a DRAW!";
             whoseTurn.style.color = 'yellow';
             pvpButton.style.display = 'none';
+            initialize();
           }
         }
       };
@@ -289,4 +290,6 @@ const gameBoard = (() => {
       }
     }
   }
+
+  return { boxFunctions };
 })();
